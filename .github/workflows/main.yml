@@ -1,0 +1,69 @@
+name: Improved Order Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - ipshita
+  pull_request:
+
+jobs:
+  hygiene_check:
+    name: Hygiene Check (Lint)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Lint
+        run: npm run lint
+
+  taste_test:
+    name: Taste Test (Unit Tests)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
+
+  cook_meal:
+    name: Cook Meal (Build)
+    runs-on: ubuntu-latest
+    needs:
+      - hygiene_check
+      - taste_test
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build/Compile
+        run: npm run build
+
+  serve_dish:
+    name: Serve Dish (Deploy)
+    runs-on: ubuntu-latest
+    needs: cook_meal
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Deploy Application
+        run: npm run deploy
